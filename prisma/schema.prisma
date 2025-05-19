@@ -1,0 +1,63 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "./ERD.md"
+  title    = "Shopping Mall"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+  name String
+  email String @unique
+  newsContents NewsContent[]
+  comments Comment[]
+  bookmarks Bookmark[]
+}
+
+model NewsContent {
+  id String @id @default(cuid())
+  title String
+  body String?//@db.VarChar()か@db.Textも検討
+  imageUrl String?
+  favorite Int @default(0)
+
+  quotedId String?//他のNewsContentの引用
+  userId String
+  
+  quoted NewsContent? @relation("QuoteRelation", fields: [quotedId], references: [id])
+  quotedBy NewsContent[] @relation("QuoteRelation")
+  user User @relation(fields: [userId], references: [id])
+  comments Comment[]
+  bookmarkBy Bookmark[]
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  body String//@db.VarChar()か@db.Textも検討
+
+  userId String
+  newsContentId String
+
+  user User @relation(fields: [userId], references: [id])
+  newsContent NewsContent @relation(fields: [newsContentId], references: [id])
+}
+
+model Bookmark {
+  id String @id @default(cuid())
+  
+  userId String
+  newsContentId String
+
+  user User @relation(fields: [userId], references: [id])
+  newsContent NewsContent @relation(fields: [newsContentId], references: [id])
+}
