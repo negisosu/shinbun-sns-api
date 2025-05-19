@@ -18,6 +18,11 @@ export const userService = {
                     id: id
                 }
             })
+
+            if(!user){
+                throw new Error("User Not Found")
+            }
+            
             return user
         }catch(error){
             console.error(error)

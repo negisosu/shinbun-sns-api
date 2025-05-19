@@ -1,0 +1,33 @@
+import { z } from "zod";
+
+export const NewsContentSchema = z.object({
+    id: z.string(),
+    title: z.string(),
+    body: z.string().nullable(),//nullableはnullの値自体を許可、optionalはフィールド無しでparseしても許可されるやつ
+    imageUrl: z.string().url().nullable(),
+    favorite: z.number(),
+    quotedId: z.string().nullable(),
+    userId: z.string().nonempty(),
+})
+
+export const CreateNewsContentSchema = NewsContentSchema.omit({
+    id: true,
+    favorite: true,
+    quotedId: true,
+}).extend({
+    body: z.string().nullable().optional(),
+    imageUrl: z.string().nullable().optional()
+})
+
+export const UpdateNewsContentFavoriteSchema = NewsContentSchema.pick({
+    favorite: true
+})
+
+export type NewsContent = z.infer<typeof NewsContentSchema>
+
+export type CreateNewsContentInput = z.infer<typeof CreateNewsContentSchema>
+
+export type UpdateNewsContentFavoriteInput = z.infer<typeof UpdateNewsContentFavoriteSchema>
+
+
+
