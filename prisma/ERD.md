@@ -19,6 +19,7 @@ erDiagram
   String body "nullable"
   String imageUrl "nullable"
   Int favorite
+  Int bookmark
   String quotedId FK "nullable"
   String userId FK
 }
@@ -33,12 +34,19 @@ erDiagram
   String userId FK
   String newsContentId FK
 }
+"Favorite" {
+  String id PK
+  String userId FK
+  String newsContentId FK
+}
 "NewsContent" }o--o| "NewsContent" : quoted
 "NewsContent" }o--|| "User" : user
 "Comment" }o--|| "User" : user
 "Comment" }o--|| "NewsContent" : newsContent
 "Bookmark" }o--|| "User" : user
 "Bookmark" }o--|| "NewsContent" : newsContent
+"Favorite" }o--|| "User" : user
+"Favorite" }o--|| "NewsContent" : newsContent
 ```
 
 ### `User`
@@ -58,6 +66,7 @@ Properties as follows:
 - `body`:
 - `imageUrl`:
 - `favorite`:
+- `bookmark`:
 - `quotedId`:
 - `userId`:
 
@@ -71,6 +80,14 @@ Properties as follows:
 - `newsContentId`:
 
 ### `Bookmark`
+
+Properties as follows:
+
+- `id`:
+- `userId`:
+- `newsContentId`:
+
+### `Favorite`
 
 Properties as follows:
 
