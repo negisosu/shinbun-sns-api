@@ -33,20 +33,58 @@ export const getUser = async (req: express.Request, res: express.Response): Prom
     }
 }
 
-export const createUser = async (req: express.Request, res: express.Response): Promise<void> => {
-    //zodによる値の検証
-    const result = CreateUserSchema.safeParse(req.body)
+export const getCurrentUser = async (req: express.Request, res: express.Response): Promise<void> => {
 
-    //検証に失敗してた場合
-    if(!result.success){
-        res.status(400).json({ errors: result.error.flatten() });//400はリクエスト構文の間違いや不正なリクエストのステータス
+    if(typeof req.user == "string"){
+        res.status(401).json({ error: 'Invalid token payload structure' })
         return
     }
 
-    //データ作成
+    //authenticateを通ってreq.userを入れてるかの確認
+    if(!req.user?.sub){
+        res.status(401).json({ error: 'Token not provided or invalid' })
+        return
+    }
+
+    const id = req.user.sub
+
     try{
-        const newUser: User = await userService.createUser(result.data)
-        res.status(201).json(newUser)//201はリソースの作成に成功したステータス
+        const user = await userService.getUser(id)
+
+        //userのnullチェック
+        if(!user){
+            res.status(404).json({ error: 'User Not Found' })
+        }
+
+        res.status(200).json(user)
+    }catch(error){
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
+export const createUser = async (req: express.Request, res: express.Response): Promise<void> => {
+    if(typeof req.user == "string"){
+        res.status(401).json({ error: 'Invalid token payload structure' })
+        return
+    }
+
+    const data = {
+        id: req.user?.sub,
+        name: "ユーザー",
+        email: req.user?.email
+    }
+    
+    const result = CreateUserSchema.safeParse(data)
+
+    if(!result.success) {
+        res.status(400).json({ errors: result.error.flatten() })
+        return
+    }
+
+    try{
+        const user = await userService.createUser(result.data)
+        res.status(201).json(user)
     }catch(error){
         console.error(error)
         res.status(500).json({ error: 'Internal Server Error' })

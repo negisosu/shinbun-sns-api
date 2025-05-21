@@ -1,9 +1,10 @@
 import express from "express"
-import { createUser, deleteUser, getUser, getUsers, updateUser } from "../controllers/user.controller"
+import { createUser, deleteUser, getCurrentUser, getUser, getUsers, updateUser } from "../controllers/user.controller"
 
 const router = express.Router()
 
 router.get("/", getUsers)
+router.get("/current-user", getCurrentUser)
 router.get("/:id", getUser)
 router.post("/", createUser)
 router.patch("/:id", updateUser)

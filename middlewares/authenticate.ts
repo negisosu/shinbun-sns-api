@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken"
 import express from "express"
+import { MyJwtPayload } from "../types/express";
 
 const secret = process.env.SUPABASE_JWT_SECRET;
 
@@ -18,8 +19,10 @@ export const authenticate = (req: express.Request, res: express.Response, next: 
     }
 
     try {
-        const decoded = jwt.verify(token, secret);
-        req.user = decoded
+        const decoded = jwt.verify(token, secret) as MyJwtPayload;
+        if(typeof decoded !== "string"){
+            req.user = decoded as MyJwtPayload
+        }
         next();
     } catch (err) {
         res.status(403).json({ error: 'Invalid or expired token' });

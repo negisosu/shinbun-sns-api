@@ -12,6 +12,7 @@ export const userService = {
         }
     },
     getUser: async (id: string) => {
+        console.log("getUser",id)
         try{
             const user = await prisma.user.findUnique({
                 where: {
@@ -33,6 +34,7 @@ export const userService = {
         try{
             const user = await prisma.user.create({
                 data: {
+                    id: data.id,
                     name: data.name,
                     email: data.email
                 }
