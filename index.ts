@@ -1,3 +1,6 @@
+import dotenv from "dotenv"
+dotenv.config()
+
 import express from "express"
 import userRoutes from "./routers/user.routes"
 import newsContentRoutes from "./routers/newsContent.routes"
