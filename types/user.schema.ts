@@ -8,7 +8,7 @@ export const UserSchema = z.object({
 
 export const CreateUserSchema = UserSchema
 
-export const UpdateUserSchema = UserSchema.omit({ id: true })
+export const UpdateUserSchema = UserSchema.omit({ id: true, email: true })
 
 export type User = z.infer<typeof UserSchema>
 

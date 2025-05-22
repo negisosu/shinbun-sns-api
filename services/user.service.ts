@@ -1,5 +1,5 @@
 import { prisma } from "../lib/prisma"
-import { CreateUserInput, UpdateUserInput } from "../types/user.schema"
+import { CreateUserInput, UpdateUserInput, User } from "../types/user.schema"
 
 export const userService = {
     getUsers: async () => {
@@ -12,7 +12,6 @@ export const userService = {
         }
     },
     getUser: async (id: string) => {
-        console.log("getUser",id)
         try{
             const user = await prisma.user.findUnique({
                 where: {
@@ -30,14 +29,10 @@ export const userService = {
             throw error
         }
     },
-    createUser: async (data: CreateUserInput) => {
+    createUser: async (data: User) => {
         try{
             const user = await prisma.user.create({
-                data: {
-                    id: data.id,
-                    name: data.name,
-                    email: data.email
-                }
+                data: data
             })
             return user
         }catch(error){
@@ -45,16 +40,13 @@ export const userService = {
             throw error
         }
     },
-    updateUser: async (data: UpdateUserInput, id: string) => {
+    updateUser: async (data: User) => {
         try{
             const user = await prisma.user.update({
                 where: {
-                    id: id
+                    id: data.id
                 },
-                data: {
-                    name: data.name,
-                    email: data.email
-                }
+                data: data
             })
             return user
         }catch(error){

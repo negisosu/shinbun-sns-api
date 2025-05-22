@@ -91,9 +91,20 @@ export const createUser = async (req: express.Request, res: express.Response): P
     }
 }
 
-export const updateUser = async (req: express.Request, res: express.Response): Promise<void> => {
-    //パラメーターからidの取得
-    const id = req.params.id
+export const updateCurrentUser = async (req: express.Request, res: express.Response): Promise<void> => {
+    if(typeof req.user == "string"){
+        res.status(401).json({ error: 'Invalid token payload structure' })
+        return
+    }
+
+    //authenticateを通ってreq.userを入れてるかの確認
+    if(!req.user?.sub){
+        res.status(401).json({ error: 'Token not provided or invalid' })
+        return
+    }
+
+    const id = req.user.sub
+    const email = req.user.email
 
     //zodによる値の検証
     const result = UpdateUserSchema.safeParse(req.body)
@@ -104,14 +115,53 @@ export const updateUser = async (req: express.Request, res: express.Response): P
         return
     }
 
+    const data = {
+        id: id,
+        name: result.data.name,
+        email: email
+    }
+
     //データ更新
     try{
-        const user = await userService.updateUser(result.data, id)
-
+        const user = await userService.updateUser(data)
         res.status(200).json(user)
     }catch(error){
         console.error(error)
         res.status(500).json({ error: 'Internal Server Error' })
+    }
+}
+
+export const updateUser = async (req: express.Request, res: express.Response): Promise<void> => {
+    const id = req.params.id
+
+    let email = ""
+
+    try{
+        email = (await userService.getUser(id)).email
+    }catch(error){
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error' })
+    }
+
+    const result = UpdateUserSchema.safeParse(req.body)
+
+    if(!result.success) {
+        res.status(400).json({ errors: result.error.flatten() })
+        return
+    }
+
+    const data = {
+        id: id,
+        name: result.data.name,
+        email: email
+    }
+
+    try{
+        const user = await userService.updateUser(data)
+        res.status(200).json(user)
+    }catch(error){
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error'})
     }
 }
 

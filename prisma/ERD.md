@@ -24,8 +24,9 @@ erDiagram
   String userId FK
 }
 "Comment" {
-  Int id PK
+  String id PK
   String body
+  Int commentIndex
   String userId FK
   String newsContentId FK
 }
@@ -76,6 +77,7 @@ Properties as follows:
 
 - `id`:
 - `body`:
+- `commentIndex`:
 - `userId`:
 - `newsContentId`:
 

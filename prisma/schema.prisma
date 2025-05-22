@@ -45,8 +45,12 @@ model NewsContent {
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
+  id String @id @default(nanoid())
   body String//@db.VarChar()か@db.Textも検討
+
+  commentIndex Int
+
+  @@unique([newsContentId, commentIndex])
 
   userId String
   newsContentId String
