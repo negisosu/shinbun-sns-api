@@ -63,6 +63,34 @@ export const getCurrentUser = async (req: express.Request, res: express.Response
     }
 }
 
+export const getIsUserExist = async (req: express.Request, res: express.Response): Promise<void> => {
+    if(typeof req.user == "string"){
+        res.status(401).json({ error: 'Invalid token payload structure' })
+        return
+    }
+
+    //authenticateを通ってreq.userを入れてるかの確認
+    if(!req.user?.sub){
+        res.status(401).json({ error: 'Token not provided or invalid' })
+        return
+    }
+
+    const id = req.user.sub
+
+    try{
+        const user = await userService.getUser(id)
+
+        if(!user){
+            res.status(200).send(false)
+        }else{
+            res.status(200).send(true)
+        }
+    }catch(error){
+        console.error(error)
+        res.status(500).json({ error: 'Internal Server Error '})
+    }
+}
+
 export const createUser = async (req: express.Request, res: express.Response): Promise<void> => {
     if(typeof req.user == "string"){
         res.status(401).json({ error: 'Invalid token payload structure' })
