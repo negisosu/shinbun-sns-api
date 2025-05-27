@@ -78,7 +78,7 @@ export const getIsUserExist = async (req: express.Request, res: express.Response
     const id = req.user.sub
 
     try{
-        const isUser = await userService.getUser(id)
+        const isUser = await userService.isUser(id)
 
         res.status(200).send(isUser)
     }catch(error){
