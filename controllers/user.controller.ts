@@ -78,13 +78,9 @@ export const getIsUserExist = async (req: express.Request, res: express.Response
     const id = req.user.sub
 
     try{
-        const user = await userService.getUser(id)
+        const isUser = await userService.getUser(id)
 
-        if(!user){
-            res.status(200).send(false)
-        }else{
-            res.status(200).send(true)
-        }
+        res.status(200).send(isUser)
     }catch(error){
         console.error(error)
         res.status(500).json({ error: 'Internal Server Error '})

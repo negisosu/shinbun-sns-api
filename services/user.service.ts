@@ -29,6 +29,24 @@ export const userService = {
             throw error
         }
     },
+    isUser: async (id: string) => {
+        try{
+            const user = await prisma.user.findUnique({
+                where: {
+                    id: id
+                }
+            })
+
+            if(user){
+                return true
+            }else{
+                return false
+            }
+        }catch(error){
+            console.error(error)
+            throw error
+        }
+    },
     createUser: async (data: User) => {
         try{
             const user = await prisma.user.create({
