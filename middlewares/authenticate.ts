@@ -20,6 +20,9 @@ export const authenticate = (req: express.Request, res: express.Response, next: 
 
     try {
         const decoded = jwt.verify(token, secret) as MyJwtPayload;
+
+        console.log(decoded)
+        
         if(typeof decoded !== "string"){
             req.user = decoded as MyJwtPayload
         }

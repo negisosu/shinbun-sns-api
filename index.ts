@@ -7,10 +7,24 @@ import userRoutes from "./routers/user.routes"
 import newsContentRoutes from "./routers/newsContent.routes"
 
 const app: express.Express = express()
-const port = 3002
+const port: number = 3002
 
 //リクエストやレスポンスでjsonを使用
 app.use(express.json())
+
+app.use((req, res, next) => {
+    const start = Date.now();
+  
+    res.on('finish', () => {
+      const duration = Date.now() - start;
+      console.log(
+        `[${new Date().toISOString()}] ${req.method} ${req.originalUrl} → ${res.statusCode} (${duration}ms)`
+      );
+    });
+  
+    next();
+  });
+  
 //認証ミドルウェア
 app.use(authenticate)
 
